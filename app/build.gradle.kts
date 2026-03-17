@@ -1,0 +1,143 @@
+import java.util.Properties
+import java.text.SimpleDateFormat
+import java.util.Date
+
+fun generateVersionCode(): Int {
+    return SimpleDateFormat("yyMMddHH").format(Date()).toInt()
+}
+
+plugins {
+    id("com.google.devtools.ksp")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlinx.serialization)
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
+android {
+    namespace = "app.what.schedule"
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId = "app.what.dontknow"
+        minSdk = 26
+        targetSdk = 36
+        versionCode = generateVersionCode()
+        versionName = "1.0.4-beta.1"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+
+        buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://raw.githubusercontent.com/whatrushki/WHAT-Schedule-android/refs/heads/master/PRIVACY_POLICY.md\"")
+        buildConfigField("String", "APP_OWNER_ROLE", "\"Android Developer\"")
+        buildConfigField("String", "APP_OWNER_GITHUB_AVATAR_URL", "\"https://github.com/topanim.png\"")
+        buildConfigField("String", "APP_OWNER_GITHUB_NICKNAME", "\"topanim\"")
+        buildConfigField("String", "APP_OWNER_GITHUB_URL", "\"https://github.com/topanim\"")
+        buildConfigField("String", "APP_OWNER_TELEGRAM_URL", "\"https://t.me/whatrushik\"")
+        buildConfigField("String", "APP_GITHUB_URL", "\"https://github.com/whatrushki/WHAT-Schedule-android\"")
+    }
+
+    signingConfigs {
+        create("release") {
+            val keystorePropsFile = file("keystore/keystore_config.properties")
+            if (keystorePropsFile.exists()) {
+                val keystoreProperties = Properties().apply {
+                    keystorePropsFile.inputStream().use { load(it) }
+                }
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            } else {
+                storeFile = file("keystore/what_apps_keystore.keystore")
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+                keyAlias = System.getenv("RELEASE_SIGN_KEY_ALIAS") ?: ""
+                keyPassword = System.getenv("RELEASE_SIGN_KEY_PASSWORD") ?: ""
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true    // Включить для релиза
+            isShrinkResources = true  // Удалить неиспользуемые ресурсы
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
+        }
+
+        debug {
+            isMinifyEnabled = false   // Отключить для отладки
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    packaging {
+        resources.pickFirsts.add("META-INF/*")
+    }
+}
+
+dependencies {
+    implementation(project(":core:foundation"))
+    implementation(project(":core:navigation"))
+
+    ksp(libs.room.compiler)
+
+    implementation(libs.bundles.ktor)
+    implementation(libs.bundles.koin)
+    implementation(libs.bundles.room)
+    implementation(libs.bundles.coil)
+
+    implementation(libs.qrose)
+    implementation(libs.poi)
+    implementation(libs.poi.ooxml)
+    implementation(libs.process.phoenix)
+    implementation(libs.ksoup.lite)
+    implementation(libs.materialKolor)
+    implementation(libs.androidx.glance)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.work.runtime.ktx)
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material3.icons)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+}
