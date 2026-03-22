@@ -8,10 +8,15 @@ import app.what.foundation.services.auto_update.InstallSource
 import app.what.foundation.services.auto_update.getInstallSource
 import app.what.foundation.services.crash.CrashHandler
 import app.what.schedule.data.local.settings.AppValues
+import app.what.schedule.data.remote.dealer.DealerApiClient
+import app.what.schedule.data.remote.dealer.DealerAuthRepository
+import app.what.schedule.data.remote.dealer.DealerBackendRepository
+import app.what.schedule.features.auth.domain.AuthController
 import app.what.schedule.features.dev.presentation.NetworkMonitorPlugin
 import app.what.schedule.features.main.domain.MainController
 import app.what.schedule.features.news.domain.NewsController
 import app.what.schedule.features.onboarding.domain.OnboardingController
+import app.what.schedule.features.pin.domain.PinController
 import app.what.schedule.features.schedule.domain.ScheduleController
 import app.what.schedule.features.settings.domain.SettingsController
 import app.what.schedule.libs.FileManager
@@ -32,14 +37,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
-import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import java.security.cert.X509Certificate
-import javax.net.ssl.X509TrustManager
 
 class ScheduleApp : Application() {
     override fun onCreate() {
@@ -49,12 +51,13 @@ class ScheduleApp : Application() {
         AppLogger.initialize(applicationContext)
         CrashHandler.initialize(applicationContext, CrashActivity::class.java)
 
-        startKoin {
+        val koinApp = startKoin {
             androidContext(this@ScheduleApp)
             modules(generalModule, controllers)
         }
 
-        val koin = getKoin()
+        val koin = koinApp.koin
+        koin.get<AppValues>()
 
         SingletonImageLoader.setSafe {
             ImageLoader.Builder(this)
@@ -75,10 +78,12 @@ class ScheduleApp : Application() {
 }
 
 val controllers = module {
+    singleOf(::AuthController)
     singleOf(::SettingsController)
     singleOf(::NewsController)
     singleOf(::ScheduleController)
     singleOf(::OnboardingController)
+    singleOf(::PinController)
     singleOf(::MainController)
 }
 
@@ -86,9 +91,12 @@ val generalModule = module {
     single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate) }
 
     singleOf(::AppValues) bind PreferenceStorage::class
+    singleOf(::DealerApiClient)
+    singleOf(::DealerAuthRepository)
     singleOf(::AppUtils)
     singleOf(::GoogleDriveParser)
     singleOf(::FileManager)
+    singleOf(::DealerBackendRepository)
 
 //
 //    single {
@@ -128,25 +136,6 @@ val generalModule = module {
                 requestTimeoutMillis = 60 * 1000
             }
 
-            engine {
-                https {
-                    trustManager = object : X509TrustManager {
-                        override fun checkClientTrusted(
-                            chain: Array<X509Certificate>,
-                            authType: String
-                        ) {
-                        }
-
-                        override fun checkServerTrusted(
-                            chain: Array<X509Certificate>,
-                            authType: String
-                        ) {
-                        }
-
-                        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-                    }
-                }
-            }
         }
     }
 }

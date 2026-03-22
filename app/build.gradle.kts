@@ -41,6 +41,7 @@ android {
         buildConfigField("String", "APP_OWNER_GITHUB_URL", "\"https://github.com/topanim\"")
         buildConfigField("String", "APP_OWNER_TELEGRAM_URL", "\"https://t.me/whatrushik\"")
         buildConfigField("String", "APP_GITHUB_URL", "\"https://github.com/whatrushki/WHAT-Schedule-android\"")
+        buildConfigField("String", "DEALER_BACKEND_BASE_URL", "\"http://10.165.12.104:8080\"")
     }
 
     signingConfigs {
@@ -110,7 +111,6 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.bundles.room)
     implementation(libs.bundles.coil)
-
     implementation(libs.qrose)
     implementation(libs.poi)
     implementation(libs.poi.ooxml)

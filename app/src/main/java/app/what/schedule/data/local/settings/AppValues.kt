@@ -120,5 +120,53 @@ class AppValues(context: Context) : PreferenceStorage(
         null,
         Int.serializer(),
     )
+
+    val appPinHash = createValue(
+        "app_pin_hash",
+        null,
+        String.serializer(),
+    )
+
+    val appPinSavedAt = createValue(
+        "app_pin_saved_at",
+        null,
+        String.serializer(),
+    )
+
+    val appPinOwnerSberId = createValue(
+        "app_pin_owner_sber_id",
+        null,
+        String.serializer(),
+    )
+
+    val dealerBackendToken = createValue(
+        "dealer_backend_token",
+        null,
+        String.serializer(),
+    )
+
+    val dealerBackendResolvedBaseUrl = createValue(
+        "dealer_backend_resolved_base_url",
+        null,
+        String.serializer(),
+    )
+
+    val dealerBackendEmployeeId = createValue(
+        "dealer_backend_employee_id",
+        null,
+        String.serializer(),
+    )
+
+    val dealerBackendSberId = createValue(
+        "dealer_backend_sber_id",
+        null,
+        String.serializer(),
+    )
+
+    val dealerBackendEmployeeName = createValue(
+        "dealer_backend_employee_name",
+        null,
+        String.serializer(),
+    )
 }
 

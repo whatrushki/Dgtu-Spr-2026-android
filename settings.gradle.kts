@@ -28,3 +28,4 @@ rootProject.name = "WHAT Schedule"
 include(":app")
 include(":core:foundation")
 include(":core:navigation")
+include(":backend")

@@ -38,6 +38,7 @@ materialVersion = "1.13.0"
 uiGeometry = "1.10.5"
 material3 = "1.4.0"
 workRuntimeKtx = "2.11.1"
+logback = "1.5.18"
 
 [libraries]
 androidx-glance = { module = "androidx.glance:glance", version.ref = "glanceAppwidget" }
@@ -64,6 +65,14 @@ ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging-jvm", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" }
+ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml-jvm", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
 # Подгрузка изображений из сети
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
@@ -104,9 +113,11 @@ coil = ["coil", "coil-compose", "coil-network-ktor3", "coil-compose-core"]
 ktor = ["ktor-core", "ktor-client-logging", "ktor-client-cio", "ktor-client-content-negotiation", "ktor-serialization-json"]
 koin = ["koin-core", "koin-androidx-compose", "koin-android", "koin-compose"]
 room = ["room-runtime", "room-ktx"]
+ktor-server = ["ktor-server-core", "ktor-server-netty", "ktor-server-call-logging", "ktor-server-content-negotiation", "ktor-server-status-pages", "ktor-server-config-yaml", "ktor-server-cors"]
 
 [plugins]
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "agp" }

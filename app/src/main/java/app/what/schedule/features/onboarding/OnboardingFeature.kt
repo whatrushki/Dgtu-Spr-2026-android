@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import app.what.foundation.core.Feature
 import app.what.navigation.core.NavComponent
 import app.what.navigation.core.rememberNavigator
-import app.what.schedule.features.main.navigation.MainProvider
+import app.what.schedule.features.main.navigation.MainStatusProvider
 import app.what.schedule.features.onboarding.domain.OnboardingController
 import app.what.schedule.features.onboarding.domain.models.OnboardingAction
 import app.what.schedule.features.onboarding.domain.models.OnboardingEvent
@@ -41,7 +41,7 @@ class OnboardingFeature(
 
         when (viewAction) {
             OnboardingAction.NavigateToMain -> {
-                navigator.c.navigate(MainProvider) {
+                navigator.c.navigate(MainStatusProvider) {
                     popUpTo(OnboardingProvider) {
                         inclusive = true
                     }

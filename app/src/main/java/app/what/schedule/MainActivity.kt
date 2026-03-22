@@ -8,13 +8,14 @@ import androidx.activity.enableEdgeToEdge
 import app.what.navigation.core.NavigationHost
 import app.what.navigation.core.ProvideGlobalDialog
 import app.what.navigation.core.ProvideGlobalSheet
-import app.what.navigation.core.rememberHostNavigator
 import app.what.schedule.data.local.settings.AppValues
 import app.what.schedule.data.local.settings.ProvideGLobalAppValues
-import app.what.schedule.features.main.navigation.MainProvider
+import app.what.schedule.features.auth.navigation.AuthProvider
+import app.what.schedule.features.auth.navigation.authRegistry
+import app.what.schedule.features.main.navigation.MainStatusProvider
 import app.what.schedule.features.main.navigation.mainRegistry
-import app.what.schedule.features.onboarding.navigation.OnboardingProvider
-import app.what.schedule.features.onboarding.navigation.onboardingRegistry
+import app.what.schedule.features.pin.navigation.PinProvider
+import app.what.schedule.features.pin.navigation.pinRegistry
 import app.what.schedule.ui.theme.AppTheme
 import org.koin.compose.koinInject
 
@@ -29,18 +30,23 @@ class MainActivity : ComponentActivity() {
                 window.setNavigationBarContrastEnforced(false)
             }
 
-            val navigator = rememberHostNavigator()
             val settings = koinInject<AppValues>()
+            val startDestination = if (!settings.dealerBackendToken.get().isNullOrBlank()) {
+                PinProvider
+            } else {
+                AuthProvider
+            }
 
             ProvideGLobalAppValues(settings) {
                 AppTheme {
                     ProvideGlobalDialog {
                         ProvideGlobalSheet {
                             NavigationHost(
-                                start = if (settings.isFirstLaunch.get()!!) OnboardingProvider else MainProvider
+                                start = startDestination
                             ) {
+                                authRegistry()
                                 mainRegistry()
-                                onboardingRegistry()
+                                pinRegistry()
                             }
                         }
                     }
