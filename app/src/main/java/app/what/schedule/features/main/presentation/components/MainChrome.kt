@@ -16,8 +16,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -78,9 +78,7 @@ private val AccentGreen = Color(0xFF34C759)
 private val GlassStroke = Color(0x1FD8ECE0)
 private val GlassFill = Color(0x12F4FFF6)
 private val GlassGlow = Color(0x26000000)
-private val DarkGlassFill = Color(0x44070D0A)
 private val DarkGlassStrong = Color(0x660A120D)
-private val DarkGlassBorder = Color(0x22D8F2E1)
 private val PanelGlassFill = Color(0x68040907)
 private val PanelGlassBorder = Color(0x1EDCF2E4)
 

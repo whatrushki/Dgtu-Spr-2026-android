@@ -181,7 +181,7 @@ class MainController(
                 .onSuccess { message ->
                     updateState {
                         copy(
-                            assistantHistory = listOf(message) + assistantHistory,
+                            assistantHistory = assistantHistory + message,
                             supportComposer = supportComposer.copy(
                                 isAssistantLoading = false,
                                 assistantQuestion = "",

@@ -1,5 +1,6 @@
 package app.what.schedule.features.main.presentation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -90,7 +91,7 @@ fun MainView(
 private fun MainTabContent(
     tab: MainTab,
     state: MainState,
-    contentPadding: androidx.compose.foundation.layout.PaddingValues,
+    contentPadding: PaddingValues,
     listener: (MainEvent) -> Unit
 ) {
     when (tab) {

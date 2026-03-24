@@ -102,7 +102,10 @@ fun LearningScreen(
                                         quiz = currentQuiz,
                                         onUpdateQuizAnswer = onUpdateQuizAnswer,
                                         onSubmitQuiz = onSubmitQuiz,
-                                        onCloseQuiz = onCloseQuiz
+                                        onCloseQuiz = {
+                                            dialog.close()
+                                            onCloseQuiz()
+                                        }
                                     )
                                 }
                             } else {

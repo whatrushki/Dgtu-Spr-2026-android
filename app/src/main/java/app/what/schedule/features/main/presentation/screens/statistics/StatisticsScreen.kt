@@ -54,28 +54,32 @@ fun StatisticsScreen(
         GrowthQuickActions(selectedTab = selectedTab, onSelectTab = onSelectTab)
 
         DashboardCard {
-            CardTitle(title = "Детализация рейтинга")
+            CardTitle(title = "\u0414\u0435\u0442\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F \u0440\u0435\u0439\u0442\u0438\u043D\u0433\u0430")
             ValueText(
-                text = ratingDetail.totalPoints?.let { "${formatInt(it)} баллов" } ?: "Нет данных",
+                text = ratingDetail.totalPoints?.let { "${formatInt(it)} \u0431\u0430\u043B\u043B\u043E\u0432" }
+                    ?: "\u041D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445",
                 accent = true
             )
-            HintText("Показатели ниже открываются по отдельности через иконку информации.")
+            HintText(
+                "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u0438 \u043D\u0438\u0436\u0435 \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u044E\u0442\u0441\u044F " +
+                    "\u043F\u043E \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u0438 \u0447\u0435\u0440\u0435\u0437 \u0438\u043A\u043E\u043D\u043A\u0443 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438."
+            )
             GlassPrimaryButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onSelectTab(MainTab.Calculator) }
             ) {
-                Text("Смоделировать рост")
+                Text("\u0421\u043C\u043E\u0434\u0435\u043B\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0440\u043E\u0441\u0442")
             }
-            HintText("Источник: ${sourceLabel(sources.ratingDetail)}")
+            HintText("\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A: ${sourceLabel(sources.ratingDetail)}")
         }
 
         if (currentDetail.metrics.isEmpty()) {
             DashboardCard {
-                EmptyState("Показатели по рейтингу пока не пришли")
+                EmptyState("\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u0438 \u043F\u043E \u0440\u0435\u0439\u0442\u0438\u043D\u0433\u0443 \u043F\u043E\u043A\u0430 \u043D\u0435 \u043F\u0440\u0438\u0448\u043B\u0438")
             }
         } else {
             DashboardCard {
-                CardTitle(title = "Показатели", trailing = currentDetail.metrics.size.toString())
+                CardTitle(title = "\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u0438", trailing = currentDetail.metrics.size.toString())
                 currentDetail.metrics.forEachIndexed { index, metric ->
                     if (index > 0) {
                         SectionDivider()
@@ -114,13 +118,13 @@ private fun MetricOverviewRow(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
-            HintText("Открыть описание показателя")
+            HintText("\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F")
         }
-        AccentText(metric.points?.let(::formatInt) ?: "Нет данных")
+        AccentText(metric.points?.let(::formatInt) ?: "\u041D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445")
         IconButton(onClick = onOpenDetails) {
             Icon(
                 imageVector = Icons.Outlined.Info,
-                contentDescription = "Описание показателя"
+                contentDescription = "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u0442\u0435\u043B\u044F"
             )
         }
     }
@@ -148,11 +152,11 @@ private fun MetricDetailsDialog(metric: RatingMetricUi) {
                 overflow = TextOverflow.Ellipsis
             )
             InfoBlock(
-                title = "Как рассчитывается",
+                title = "\u041A\u0430\u043A \u0440\u0430\u0441\u0441\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F",
                 body = metric.howCalculated
             )
             InfoBlock(
-                title = "Как увеличить",
+                title = "\u041A\u0430\u043A \u0443\u0432\u0435\u043B\u0438\u0447\u0438\u0442\u044C",
                 body = metric.howIncrease
             )
         }

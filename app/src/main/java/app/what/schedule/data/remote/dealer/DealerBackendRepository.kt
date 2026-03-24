@@ -1,4 +1,4 @@
-﻿package app.what.schedule.data.remote.dealer
+package app.what.schedule.data.remote.dealer
 
 import app.what.foundation.services.AppLogger.Companion.Auditor
 import app.what.schedule.data.local.settings.AppValues
@@ -71,6 +71,8 @@ class DealerBackendRepository(
             val assistantHistoryValue = assistantHistory.await()
             val newsValue = news.await()
 
+            val learningModulesUi = learningValue.map { it.toUi() }
+
             BackendMainData(
                 dashboard = statusValue.toDashboard(
                     profile = profileValue,
@@ -84,12 +86,16 @@ class DealerBackendRepository(
                 dailyResults = dailyValue.toUi(),
                 profile = profileValue.toUi(),
                 news = newsValue.map { it.toUi() },
-                learningModules = learningValue.map { it.toUi() },
-                learningAttempts = learningAttemptsValue.map { it.toUi() },
+                learningModules = learningModulesUi,
+                learningAttempts = learningAttemptsValue.map { it.toUi(learningModulesUi) },
                 supportTickets = supportValue.map { it.toUi() },
                 assistantHistory = assistantHistoryValue.map { it.toUi() },
-                dealerLeaderboardItems = dealerLeaderboardValue.map { it.toUi() },
-                regionLeaderboardItems = regionLeaderboardValue.map { it.toUi() },
+                dealerLeaderboardItems = dealerLeaderboardValue
+                    .map { it.toUi() }
+                    .sortedWith(compareBy<LeaderboardUi> { it.position }.thenByDescending { it.totalPoints }),
+                regionLeaderboardItems = regionLeaderboardValue
+                    .map { it.toUi() }
+                    .sortedWith(compareBy<LeaderboardUi> { it.position }.thenByDescending { it.totalPoints }),
                 dealerRank = dealerPositionValue.position.takeIf { it > 0 },
                 regionRank = regionPositionValue.position.takeIf { it > 0 }
             ).also {
@@ -184,16 +190,21 @@ class DealerBackendRepository(
         ).toUi(question.trim())
 
     suspend fun getLearningQuiz(moduleId: String): LearningQuizUi =
-        apiClient.getLearningQuiz(moduleId).toUi()
+        apiClient.getLearningQuiz(moduleId).toUi(
+            moduleTitle = safeRead("learning/modules") { apiClient.getLearningModules() }
+                ?.firstOrNull { it.id == moduleId }
+                ?.title
+                .orEmpty()
+        )
 
     suspend fun submitLearningQuiz(quiz: LearningQuizUi): LearningQuizResultUi {
         val answers = quiz.questions.mapNotNull { question ->
-            question.selectedAnswers
-                .takeIf { it.isNotEmpty() }
-                ?.let { selected ->
+            question.selectedAnswers.firstOrNull()?.let { selected ->
+                val selectedIndex = question.options.indexOf(selected)
+                if (selectedIndex < 0) return@mapNotNull null
                 LearningAnswerRequestDto(
                     questionId = question.id,
-                    answers = selected
+                    selectedOptionIndex = selectedIndex
                 )
             }
         }
@@ -253,28 +264,28 @@ private fun RatingDetailResponseDto.toUi(): RatingDetailUi = RatingDetailUi(
     totalPoints = totalPoints,
     metrics = listOf(
         RatingMetricUi(
-            title = "РћР±СЉРµРј",
+            title = "Объём",
             points = volumePoints,
-            howCalculated = "РРЅРґРµРєСЃ = (С„Р°РєС‚ РѕР±СЉРµРјР° / РїР»Р°РЅ РѕР±СЉРµРјР°) x 100, РјР°РєСЃРёРјСѓРј 120.",
-            howIncrease = "РЈРІРµР»РёС‡РёРІР°Р№С‚Рµ РїСЂРѕС„РёРЅР°РЅСЃРёСЂРѕРІР°РЅРЅС‹Р№ РѕР±СЉРµРј РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РїР»Р°РЅР°."
+            howCalculated = "Индекс = (факт объёма / план объёма) x 100, максимум 120.",
+            howIncrease = "Увеличивайте профинансированный объём относительно плана."
         ),
         RatingMetricUi(
-            title = "РЎРґРµР»РєРё",
+            title = "Сделки",
             points = dealsPoints,
-            howCalculated = "РРЅРґРµРєСЃ = (С„Р°РєС‚ СЃРґРµР»РѕРє / РїР»Р°РЅ СЃРґРµР»РѕРє) x 100.",
-            howIncrease = "РЈРІРµР»РёС‡РёРІР°Р№С‚Рµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРґРµР»РѕРє РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РїР»Р°РЅР°."
+            howCalculated = "Индекс = (факт сделок / план сделок) x 100.",
+            howIncrease = "Увеличивайте количество сделок относительно плана."
         ),
         RatingMetricUi(
-            title = "Р”РѕР»СЏ Р±Р°РЅРєР°",
+            title = "Доля банка",
             points = sharePoints,
-            howCalculated = "РРЅРґРµРєСЃ = (С„Р°РєС‚ РґРѕР»Рё / С†РµР»РµРІР°СЏ РґРѕР»СЏ) x 100.",
-            howIncrease = "РџРѕРІС‹С€Р°Р№С‚Рµ РґРѕР»СЋ СЃРґРµР»РѕРє С‡РµСЂРµР· Р±Р°РЅРє."
+            howCalculated = "Индекс = (факт доли / целевая доля) x 100.",
+            howIncrease = "Повышайте долю сделок через банк."
         ),
         RatingMetricUi(
-            title = "РљРѕРЅРІРµСЂСЃРёСЏ",
+            title = "Конверсия",
             points = conversionPoints.takeIf { it > 0 } ?: additionalProductsPoints,
-            howCalculated = "РРЅРґРµРєСЃ = (РѕРґРѕР±СЂРµРЅРѕ Р·Р°СЏРІРѕРє / РїРѕРґР°РЅРѕ Р·Р°СЏРІРѕРє) x 100.",
-            howIncrease = "РџРѕРІС‹С€Р°Р№С‚Рµ РєР°С‡РµСЃС‚РІРѕ Р·Р°СЏРІРѕРє РґР»СЏ СЂРѕСЃС‚Р° РѕРґРѕР±СЂРµРЅРёР№."
+            howCalculated = "Индекс = (одобрено заявок / подано заявок) x 100.",
+            howIncrease = "Повышайте качество заявок для роста одобрений."
         )
     )
 )
@@ -354,9 +365,10 @@ private fun StatusResponseDto.toDashboard(
 private fun TaskResponseDto.toUi(): MonthTaskUi = MonthTaskUi(
     id = id,
     title = title,
-    reward = "+$pointsReward Р±Р°Р»Р»РѕРІ",
+    metric = metricType.toTaskMetricLabel(),
+    reward = "+$pointsReward баллов",
     progress = "$currentValue / $targetValue",
-    progressPercent = progressPercent.toInt(),
+    progressPercent = progressPercent.roundToInt(),
     deadline = deadline,
     description = description,
     completed = completed
@@ -374,7 +386,7 @@ private fun PrivilegeItemResponseDto.toUi(): PrivilegeUi = PrivilegeUi(
 private fun LeaderboardItemDto.toUi(): LeaderboardUi = LeaderboardUi(
     position = position,
     fullName = fullName,
-    dealerCenterCode = dealerCenterCode,
+    dealerCenterCode = dealerCenterCode.ifBlank { "Не указан" },
     totalPoints = totalPoints,
     level = level.toLevelLabel()
 )
@@ -385,51 +397,46 @@ private fun LearningModuleResponseDto.toUi(): LearningModuleUi = LearningModuleU
     description = description,
     pointsReward = pointsReward,
     completed = completed,
-    difficulty = difficulty?.formatLabel(),
-    durationMinutes = durationMinutes,
-    format = format?.formatLabel(),
-    progressPercent = progressPercent?.roundToInt(),
-    quizAvailable = quizAvailable != false,
-    category = category?.formatLabel()
+    durationMinutes = durationMin,
+    format = if (videoUrl.isNullOrBlank()) null else "Видео",
+    progressPercent = lastScorePercent,
+    quizAvailable = true,
+    category = quizPassPercent?.let { "Порог прохождения: $it%" }
 )
 
-private fun LearningAttemptResponseDto.toUi(): LearningAttemptUi = LearningAttemptUi(
-    id = id,
+private fun LearningAttemptResponseDto.toUi(modules: List<LearningModuleUi>): LearningAttemptUi = LearningAttemptUi(
+    id = attemptId,
     moduleId = moduleId,
-    moduleTitle = moduleTitle,
-    score = score,
-    totalQuestions = totalQuestions,
-    correctAnswers = correctAnswers,
+    moduleTitle = modules.firstOrNull { it.id == moduleId }?.title ?: "Модуль",
+    score = scorePercent,
+    totalQuestions = 0,
+    correctAnswers = 0,
     passed = passed,
-    pointsAwarded = pointsAwarded,
-    completedAt = completedAt.take(16).replace('T', ' ')
+    pointsAwarded = awardedPoints,
+    completedAt = attemptedAt.take(16).replace('T', ' ')
 )
 
-private fun LearningQuizResponseDto.toUi(): LearningQuizUi = LearningQuizUi(
+private fun LearningQuizResponseDto.toUi(moduleTitle: String): LearningQuizUi = LearningQuizUi(
     moduleId = moduleId,
-    moduleTitle = moduleTitle,
-    description = description,
-    questions = questions.map { it.toUi() },
-    timeLimitMinutes = timeLimitMinutes,
-    attemptsLeft = attemptsLeft
+    moduleTitle = moduleTitle.ifBlank { "Квиз" },
+    description = passScorePercent?.let { "Для прохождения нужно $it%" },
+    questions = questions.sortedBy { it.orderNo ?: Int.MAX_VALUE }.map { it.toUi() }
 )
 
 private fun LearningQuizQuestionResponseDto.toUi(): LearningQuizQuestionUi = LearningQuizQuestionUi(
     id = id,
-    question = question,
-    options = options,
-    multiple = multiple,
-    explanation = explanation
+    question = questionText,
+    options = options
 )
 
 private fun LearningQuizSubmitResponseDto.toUi(): LearningQuizResultUi = LearningQuizResultUi(
-    score = score,
+    score = scorePercent,
     totalQuestions = totalQuestions,
     correctAnswers = correctAnswers,
     passed = passed,
-    pointsAwarded = pointsAwarded,
-    summary = summary,
-    completedAt = completedAt.take(16).replace('T', ' ')
+    pointsAwarded = awardedPoints,
+    summary = if (moduleCompleted) "Модуль завершён" else null,
+    completedAt = LocalDate.now().toString()
 )
 
 private fun SupportTicketResponseDto.toUi(): SupportTicketUi = SupportTicketUi(
@@ -490,9 +497,18 @@ private fun String.toNextLevelLabel(): String? = when (uppercase(Locale.getDefau
 }
 
 private fun String.toPrivilegeLabel(): String = when (uppercase(Locale.getDefault())) {
-    "ACTIVE" -> "РђРєС‚РёРІРЅР°"
-    "LOCKED" -> "Р—Р°Р±Р»РѕРєРёСЂРѕРІР°РЅР°"
-    "COMING_SOON" -> "РЎРєРѕСЂРѕ"
+    "ACTIVE" -> "Активна"
+    "LOCKED" -> "Заблокирована"
+    "COMING_SOON" -> "Скоро"
+    else -> formatLabel()
+}
+
+private fun String.toTaskMetricLabel(): String = when (uppercase(Locale.getDefault())) {
+    "VOLUME", "VOLUME_RUB" -> "Объём"
+    "DEALS", "DEAL_COUNT" -> "Сделки"
+    "SHARE", "BANK_SHARE", "BANK_SHARE_PERCENT" -> "Доля банка"
+    "ADDITIONAL_PRODUCTS", "ADDITIONAL_PRODUCTS_COUNT" -> "Доп. продукты"
+    "CONVERSION" -> "Конверсия"
     else -> formatLabel()
 }
 

@@ -547,14 +547,13 @@ data class LearningModuleResponseDto(
     val id: String = "",
     val title: String = "",
     val description: String = "",
+    val videoUrl: String? = null,
+    val durationMin: Int? = null,
+    val quizPassPercent: Int? = null,
+    val attemptsCount: Int? = null,
+    val lastScorePercent: Int? = null,
     val pointsReward: Int = 0,
-    val completed: Boolean = false,
-    val difficulty: String? = null,
-    val durationMinutes: Int? = null,
-    val format: String? = null,
-    val progressPercent: Double? = null,
-    val quizAvailable: Boolean? = null,
-    val category: String? = null
+    val completed: Boolean = false
 )
 
 @Serializable
@@ -565,26 +564,22 @@ data class LearningCompleteRequestDto(
 @Serializable
 data class LearningQuizQuestionResponseDto(
     val id: String = "",
-    val question: String = "",
+    val questionText: String = "",
     val options: List<String> = emptyList(),
-    val multiple: Boolean = false,
-    val explanation: String? = null
+    val orderNo: Int? = null
 )
 
 @Serializable
 data class LearningQuizResponseDto(
     val moduleId: String = "",
-    val moduleTitle: String = "",
-    val description: String? = null,
+    val passScorePercent: Int? = null,
     val questions: List<LearningQuizQuestionResponseDto> = emptyList(),
-    val timeLimitMinutes: Int? = null,
-    val attemptsLeft: Int? = null
 )
 
 @Serializable
 data class LearningAnswerRequestDto(
     val questionId: String,
-    val answers: List<String>
+    val selectedOptionIndex: Int
 )
 
 @Serializable
@@ -596,28 +591,22 @@ data class LearningQuizSubmitRequestDto(
 @Serializable
 data class LearningQuizSubmitResponseDto(
     val attemptId: String = "",
-    val score: Int = 0,
-    val totalQuestions: Int = 0,
+    val scorePercent: Int = 0,
     val correctAnswers: Int = 0,
+    val totalQuestions: Int = 0,
     val passed: Boolean = false,
-    val pointsAwarded: Int = 0,
-    val summary: String? = null,
-    val completedAt: String = "",
-    val moduleId: String = "",
-    val moduleTitle: String = ""
+    val awardedPoints: Int = 0,
+    val moduleCompleted: Boolean = false
 )
 
 @Serializable
 data class LearningAttemptResponseDto(
-    val id: String = "",
+    val attemptId: String = "",
     val moduleId: String = "",
-    val moduleTitle: String = "",
-    val score: Int = 0,
-    val totalQuestions: Int = 0,
-    val correctAnswers: Int = 0,
+    val scorePercent: Int = 0,
     val passed: Boolean = false,
-    val pointsAwarded: Int = 0,
-    val completedAt: String = ""
+    val awardedPoints: Int = 0,
+    val attemptedAt: String = ""
 )
 
 @Serializable

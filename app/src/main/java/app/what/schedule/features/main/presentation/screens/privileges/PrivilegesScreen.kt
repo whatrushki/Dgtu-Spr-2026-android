@@ -20,7 +20,6 @@ import app.what.schedule.features.main.presentation.components.GlassSecondaryBut
 import app.what.schedule.features.main.presentation.components.HintText
 import app.what.schedule.features.main.presentation.components.ScreenColumn
 import app.what.schedule.features.main.presentation.components.ScreenSectionTitle
-import app.what.schedule.features.main.presentation.components.SectionGap
 import app.what.schedule.features.main.presentation.components.formatMoney
 import app.what.schedule.features.main.presentation.screens.financial.BenefitQuickActions
 
@@ -34,13 +33,13 @@ fun PrivilegesScreen(
     ScreenColumn(contentPadding = contentPadding) {
         BenefitQuickActions(selectedTab = selectedTab, onSelectTab = onSelectTab)
         PrivilegeBlock(
-            title = "Активные привилегии",
+            title = "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0435 \u043F\u0440\u0438\u0432\u0438\u043B\u0435\u0433\u0438\u0438",
             items = dashboard.activePrivileges,
             onOpenCalculator = { onSelectTab(MainTab.Calculator) },
             onOpenDetails = { onSelectTab(MainTab.FinancialEffect) }
         )
         PrivilegeBlock(
-            title = "Заблокированные привилегии",
+            title = "\u0417\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0435 \u043F\u0440\u0438\u0432\u0438\u043B\u0435\u0433\u0438\u0438",
             items = dashboard.lockedPrivileges,
             onOpenCalculator = { onSelectTab(MainTab.Calculator) },
             onOpenDetails = { onSelectTab(MainTab.FinancialEffect) }
@@ -59,7 +58,7 @@ private fun PrivilegeBlock(
         if (items.isEmpty()) {
             DashboardCard {
                 CardTitle(title = title, trailing = "0")
-                EmptyState("Привилегии пока не загружены")
+                EmptyState("\u041F\u0440\u0438\u0432\u0438\u043B\u0435\u0433\u0438\u0438 \u043F\u043E\u043A\u0430 \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u044B")
             }
         } else {
             ScreenSectionTitle(text = title)
@@ -67,8 +66,8 @@ private fun PrivilegeBlock(
                 DashboardCard {
                     CardTitle(title = item.title, trailing = item.status)
                     item.description?.let { HintText(it) }
-                    item.requiredLevel?.let { HintText("Уровень: $it") }
-                    item.financialEffectRub?.let { HintText("Финансовый эффект: ${formatMoney(it)}") }
+                    item.requiredLevel?.let { HintText("\u0423\u0440\u043E\u0432\u0435\u043D\u044C: $it") }
+                    item.financialEffectRub?.let { HintText("\u0424\u0438\u043D\u0430\u043D\u0441\u043E\u0432\u044B\u0439 \u044D\u0444\u0444\u0435\u043A\u0442: ${formatMoney(it)}") }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -78,14 +77,14 @@ private fun PrivilegeBlock(
                             onClick = onOpenDetails,
                             height = 46.dp
                         ) {
-                            Text("Подробнее")
+                            Text("\u041F\u043E\u0434\u0440\u043E\u0431\u043D\u0435\u0435")
                         }
                         GlassPrimaryButton(
                             modifier = Modifier.weight(1f),
                             onClick = onOpenCalculator,
                             height = 46.dp
                         ) {
-                            Text("Рассчитать")
+                            Text("\u0420\u0430\u0441\u0441\u0447\u0438\u0442\u0430\u0442\u044C")
                         }
                     }
                 }

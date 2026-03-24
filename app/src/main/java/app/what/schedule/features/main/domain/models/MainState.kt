@@ -17,7 +17,7 @@ data class MainState(
     val assistantHistory: List<AssistantMessageUi> = emptyList(),
     val dealerLeaderboardItems: List<LeaderboardUi> = emptyList(),
     val regionLeaderboardItems: List<LeaderboardUi> = emptyList(),
-    val selectedLeaderboardScope: LeaderboardScope = LeaderboardScope.Dealer,
+    val selectedLeaderboardScope: LeaderboardScope = LeaderboardScope.Region,
     val dealerRank: Int? = null,
     val regionRank: Int? = null,
     val calculatorForm: ScenarioFormUi = ScenarioFormUi(),
@@ -79,10 +79,10 @@ data class RatingDetailUi(
     val totalPoints: Int? = null,
     val metrics: List<RatingMetricUi> = listOf(
         RatingMetricUi(
-            title = "Объем",
+            title = "Объём",
             points = null,
-            howCalculated = "Индекс = (факт объема / план объема) x 100, максимум 120.",
-            howIncrease = "Увеличивайте профинансированный объем относительно плана."
+            howCalculated = "Индекс = (факт объёма / план объёма) x 100, максимум 120.",
+            howIncrease = "Увеличивайте профинансированный объём относительно плана."
         ),
         RatingMetricUi(
             title = "Сделки",
@@ -130,6 +130,7 @@ data class DashboardSources(
 data class MonthTaskUi(
     val id: String? = null,
     val title: String,
+    val metric: String? = null,
     val reward: String? = null,
     val progress: String? = null,
     val progressPercent: Int? = null,

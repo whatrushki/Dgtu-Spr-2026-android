@@ -33,21 +33,22 @@ fun TasksScreen(
 
         if (dashboard.monthlyTasks.isEmpty()) {
             DashboardCard {
-                CardTitle(title = "Задачи месяца", trailing = "0")
-                EmptyState("Задачи месяца пока не загружены")
-                HintText("Источник: ${sourceLabel(sources.tasks)}")
+                CardTitle(title = "\u0417\u0430\u0434\u0430\u0447\u0438 \u043C\u0435\u0441\u044F\u0446\u0430", trailing = "0")
+                EmptyState("\u0417\u0430\u0434\u0430\u0447\u0438 \u043C\u0435\u0441\u044F\u0446\u0430 \u043F\u043E\u043A\u0430 \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u044B")
+                HintText("\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A: ${sourceLabel(sources.tasks)}")
             }
         } else {
             dashboard.monthlyTasks.forEachIndexed { index, task ->
                 DashboardCard {
                     CardTitle(title = task.title, trailing = "${index + 1}")
                     task.description?.let { HintText(it) }
-                    task.progress?.let { HintText("Прогресс: $it") }
-                    task.reward?.let { HintText("Награда: $it") }
-                    task.deadline?.let { HintText("Дедлайн: $it") }
+                    task.metric?.let { HintText("Показатель: $it") }
+                    task.progress?.let { HintText("\u041F\u0440\u043E\u0433\u0440\u0435\u0441\u0441: $it") }
+                    task.reward?.let { HintText("\u041D\u0430\u0433\u0440\u0430\u0434\u0430: $it") }
+                    task.deadline?.let { HintText("\u0414\u0435\u0434\u043B\u0430\u0439\u043D: $it") }
                     ProgressTrack((task.progressPercent ?: 0) / 100f)
                     Text(
-                        text = if (task.completed) "Выполнено" else "В работе",
+                        text = if (task.completed) "\u0412\u044B\u043F\u043E\u043B\u043D\u0435\u043D\u043E" else "\u0412 \u0440\u0430\u0431\u043E\u0442\u0435",
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold
@@ -56,7 +57,7 @@ fun TasksScreen(
             }
             DashboardCard {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    CardTitle(title = "Источник")
+                    CardTitle(title = "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A")
                     HintText(sourceLabel(sources.tasks))
                 }
             }

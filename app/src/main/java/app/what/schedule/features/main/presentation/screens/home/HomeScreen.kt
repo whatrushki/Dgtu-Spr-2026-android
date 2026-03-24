@@ -32,7 +32,7 @@ import app.what.schedule.features.main.presentation.components.formatInt
 import app.what.schedule.features.main.presentation.components.formatMoney
 import app.what.schedule.features.main.presentation.components.sourceLabel
 
-private const val NO_DATA = "Нет данных"
+private const val NO_DATA = "\u041D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445"
 
 @Composable
 fun HomeScreen(
@@ -49,10 +49,20 @@ fun HomeScreen(
     ScreenColumn(contentPadding = contentPadding) {
         if (isLoading || !errorMessage.isNullOrBlank()) {
             DashboardCard {
-                CardTitle(title = if (isLoading) "Загрузка данных" else "Не удалось обновить экран")
-                HintText(errorMessage ?: "Получаем статус, рейтинг и финансовый эффект из backend.")
+                CardTitle(
+                    title = if (isLoading) {
+                        "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0434\u0430\u043D\u043D\u044B\u0445"
+                    } else {
+                        "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u044D\u043A\u0440\u0430\u043D"
+                    }
+                )
+                HintText(
+                    errorMessage
+                        ?: "\u041F\u043E\u043B\u0443\u0447\u0430\u0435\u043C \u0441\u0442\u0430\u0442\u0443\u0441, \u0440\u0435\u0439\u0442\u0438\u043D\u0433 " +
+                            "\u0438 \u0444\u0438\u043D\u0430\u043D\u0441\u043E\u0432\u044B\u0439 \u044D\u0444\u0444\u0435\u043A\u0442 \u0438\u0437 backend."
+                )
                 GlassPrimaryButton(onClick = onRetry) {
-                    Text("Обновить")
+                    Text("\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C")
                 }
             }
         }
@@ -78,13 +88,18 @@ private fun AssistantCard(
 ) {
     DashboardCard {
         CardTitle(title = "GigaChat")
-        AccentText("Нейроассистент уже доступен")
-        HintText("Задавайте вопросы по KPI, тикетам, обучающим материалам и рабочим сценариям прямо в сервисном разделе.")
+        AccentText("\u041D\u0435\u0439\u0440\u043E\u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442 \u0443\u0436\u0435 \u0434\u043E\u0441\u0442\u0443\u043F\u0435\u043D")
+        HintText(
+            "\u0417\u0430\u0434\u0430\u0432\u0430\u0439\u0442\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u044B \u043F\u043E KPI, \u0442\u0438\u043A\u0435\u0442\u0430\u043C, " +
+                "\u043E\u0431\u0443\u0447\u0430\u044E\u0449\u0438\u043C \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u0430\u043C \u0438 " +
+                "\u0440\u0430\u0431\u043E\u0447\u0438\u043C \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F\u043C \u043F\u0440\u044F\u043C\u043E \u0432 " +
+                "\u0441\u0435\u0440\u0432\u0438\u0441\u043D\u043E\u043C \u0440\u0430\u0437\u0434\u0435\u043B\u0435."
+        )
         GlassSecondaryButton(
             onClick = onOpenSupport,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Открыть ассистента")
+            Text("\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442\u0430")
         }
     }
 }
@@ -97,17 +112,18 @@ private fun HeroCard(
 ) {
     DashboardCard {
         CardTitle(
-            title = dashboard.currentStatus ?: "Текущий статус",
-            trailing = dashboard.nextStatus?.let { "Следующий: $it" }
+            title = dashboard.currentStatus ?: "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u0441\u0442\u0430\u0442\u0443\u0441",
+            trailing = dashboard.nextStatus?.let { "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439: $it" }
         )
         ValueText(
-            text = dashboard.currentPoints?.let { "${formatInt(it)} баллов" } ?: NO_DATA,
+            text = dashboard.currentPoints?.let { "${formatInt(it)} \u0431\u0430\u043B\u043B\u043E\u0432" } ?: NO_DATA,
             accent = true
         )
         LabelText(
             dashboard.pointsToNextLevel?.let {
-                "До ${dashboard.nextStatus ?: "следующего уровня"} осталось $it баллов"
-            } ?: "Нет данных по следующему уровню"
+                "\u0414\u043E ${dashboard.nextStatus ?: "\u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E \u0443\u0440\u043E\u0432\u043D\u044F"} " +
+                    "\u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C $it \u0431\u0430\u043B\u043B\u043E\u0432"
+            } ?: "\u041D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445 \u043F\u043E \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C\u0443 \u0443\u0440\u043E\u0432\u043D\u044E"
         )
         ProgressTrack((dashboard.progressPercent ?: 0) / 100f)
 
@@ -117,26 +133,27 @@ private fun HeroCard(
         ) {
             MetricColumn(
                 modifier = Modifier.weight(1f),
-                label = "Прогресс",
+                label = "\u041F\u0440\u043E\u0433\u0440\u0435\u0441\u0441",
                 value = dashboard.progressPercent?.let { "$it%" } ?: NO_DATA
             )
             MetricColumn(
                 modifier = Modifier.weight(1f),
-                label = "До конца месяца",
-                value = dashboard.daysToMonthEnd?.let { "$it дней" } ?: NO_DATA
+                label = "\u0414\u043E \u043A\u043E\u043D\u0446\u0430 \u043C\u0435\u0441\u044F\u0446\u0430",
+                value = dashboard.daysToMonthEnd?.let { "$it \u0434\u043D\u0435\u0439" } ?: NO_DATA
             )
         }
 
         SectionDivider()
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            LabelText("Финансовый прогноз")
+            LabelText("\u0424\u0438\u043D\u0430\u043D\u0441\u043E\u0432\u044B\u0439 \u043F\u0440\u043E\u0433\u043D\u043E\u0437")
             AccentText(
-                dashboard.yearlyIncomeGrowthRub?.let { "Доход +${formatMoney(it)}" } ?: NO_DATA
+                dashboard.yearlyIncomeGrowthRub?.let { "\u0414\u043E\u0445\u043E\u0434 +${formatMoney(it)}" } ?: NO_DATA
             )
             Text(
-                text = dashboard.mortgageSavingsRub?.let { "Экономия на ипотеке: ${formatMoney(it)}" }
-                    ?: "Экономия на ипотеке: $NO_DATA",
+                text = dashboard.mortgageSavingsRub?.let {
+                    "\u042D\u043A\u043E\u043D\u043E\u043C\u0438\u044F \u043D\u0430 \u0438\u043F\u043E\u0442\u0435\u043A\u0435: ${formatMoney(it)}"
+                } ?: "\u042D\u043A\u043E\u043D\u043E\u043C\u0438\u044F \u043D\u0430 \u0438\u043F\u043E\u0442\u0435\u043A\u0435: $NO_DATA",
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium
@@ -147,11 +164,11 @@ private fun HeroCard(
             modifier = Modifier.fillMaxWidth(),
             onClick = onOpenCalculator
         ) {
-            Text("Как ускорить переход")
+            Text("\u041A\u0430\u043A \u0443\u0441\u043A\u043E\u0440\u0438\u0442\u044C \u043F\u0435\u0440\u0435\u0445\u043E\u0434")
         }
 
         HintText(dashboard.levelTransitionRule)
-        HintText("Источники: ${sourceLabel(sources.status)}, ${sourceLabel(sources.financialEffect)}")
+        HintText("\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438: ${sourceLabel(sources.status)}, ${sourceLabel(sources.financialEffect)}")
     }
 }
 
@@ -197,14 +214,14 @@ private fun DayResultCard(
     sources: DashboardSources
 ) {
     DashboardCard(modifier = modifier) {
-        CardTitle(title = "Результаты дня")
-        ResultLine("Сделки", dashboard.dailyDeals?.toString())
+        CardTitle(title = "\u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B \u0434\u043D\u044F")
+        ResultLine("\u0421\u0434\u0435\u043B\u043A\u0438", dashboard.dailyDeals?.toString())
         ResultLine(
-            "Объем",
-            dashboard.dailyCreditVolumeMln?.let { "${it.toString().replace('.', ',')} млн ₽" }
+            "\u041E\u0431\u044A\u0435\u043C",
+            dashboard.dailyCreditVolumeMln?.let { "${it.toString().replace('.', ',')} \u043C\u043B\u043D \u20BD" }
         )
-        ResultLine("Доп. продукты", dashboard.dailyExtraProducts?.toString())
-        HintText("Источник: ${sourceLabel(sources.dailyResults)}")
+        ResultLine("\u0414\u043E\u043F. \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u044B", dashboard.dailyExtraProducts?.toString())
+        HintText("\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A: ${sourceLabel(sources.dailyResults)}")
     }
 }
 
@@ -215,13 +232,15 @@ private fun RatingCard(
     sources: DashboardSources
 ) {
     DashboardCard(modifier = modifier) {
-        CardTitle(title = "Рейтинг")
+        CardTitle(title = "\u0420\u0435\u0439\u0442\u0438\u043D\u0433")
         ValueText(dashboard.rank?.let { "#$it" } ?: NO_DATA)
-        LabelText("Моя позиция в рейтинге дилера")
+        LabelText("\u041C\u043E\u044F \u043F\u043E\u0437\u0438\u0446\u0438\u044F \u0432 \u0440\u0435\u0439\u0442\u0438\u043D\u0433\u0435 \u0434\u0438\u043B\u0435\u0440\u0430")
         HintText(
-            dashboard.rankDeltaWeek?.let { "Изменение за неделю: +$it" } ?: "Нет данных по динамике"
+            dashboard.rankDeltaWeek?.let {
+                "\u0418\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435 \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E: +$it"
+            } ?: "\u041D\u0435\u0442 \u0434\u0430\u043D\u043D\u044B\u0445 \u043F\u043E \u0434\u0438\u043D\u0430\u043C\u0438\u043A\u0435"
         )
-        HintText("Источник: ${sourceLabel(sources.leaderboard)}")
+        HintText("\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A: ${sourceLabel(sources.leaderboard)}")
     }
 }
 
@@ -231,9 +250,9 @@ private fun BenefitCard(
     dashboard: DashboardUi
 ) {
     DashboardCard(modifier = modifier) {
-        CardTitle(title = "Общая выгода за год")
+        CardTitle(title = "\u041E\u0431\u0449\u0430\u044F \u0432\u044B\u0433\u043E\u0434\u0430 \u0437\u0430 \u0433\u043E\u0434")
         AccentText(formatMoney(dashboard.totalBenefitRub))
-        LabelText("Бонусы, ипотека, кешбэк, ДМС")
+        LabelText("\u0411\u043E\u043D\u0443\u0441\u044B, \u0438\u043F\u043E\u0442\u0435\u043A\u0430, \u043A\u0435\u0448\u0431\u044D\u043A, \u0414\u041C\u0421")
     }
 }
 
@@ -243,15 +262,15 @@ private fun StatusSummaryCard(
     dashboard: DashboardUi
 ) {
     DashboardCard(modifier = modifier) {
-        CardTitle(title = "Статус и цель")
-        LabelText("Текущий уровень")
+        CardTitle(title = "\u0421\u0442\u0430\u0442\u0443\u0441 \u0438 \u0446\u0435\u043B\u044C")
+        LabelText("\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u0443\u0440\u043E\u0432\u0435\u043D\u044C")
         Text(
             text = dashboard.currentStatus ?: NO_DATA,
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold
         )
-        LabelText("Баллов до следующего уровня")
+        LabelText("\u0411\u0430\u043B\u043B\u043E\u0432 \u0434\u043E \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E \u0443\u0440\u043E\u0432\u043D\u044F")
         Text(
             text = dashboard.pointsToNextLevel?.let { formatInt(it) } ?: NO_DATA,
             color = MaterialTheme.colorScheme.onSurface,
@@ -268,9 +287,9 @@ private fun TasksPreviewCard(
     onOpenTasks: () -> Unit
 ) {
     DashboardCard {
-        CardTitle(title = "Задачи месяца", trailing = dashboard.monthlyTasks.size.toString())
+        CardTitle(title = "\u0417\u0430\u0434\u0430\u0447\u0438 \u043C\u0435\u0441\u044F\u0446\u0430", trailing = dashboard.monthlyTasks.size.toString())
         if (dashboard.monthlyTasks.isEmpty()) {
-            EmptyState("Задачи пока не загружены")
+            EmptyState("\u0417\u0430\u0434\u0430\u0447\u0438 \u043F\u043E\u043A\u0430 \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u044B")
         } else {
             dashboard.monthlyTasks.take(3).forEachIndexed { index, task ->
                 if (index > 0) {
@@ -291,9 +310,9 @@ private fun TasksPreviewCard(
             }
         }
         GlassSecondaryButton(onClick = onOpenTasks) {
-            Text("Подробнее по задачам")
+            Text("\u041F\u043E\u0434\u0440\u043E\u0431\u043D\u0435\u0435 \u043F\u043E \u0437\u0430\u0434\u0430\u0447\u0430\u043C")
         }
-        HintText("Источник: ${sourceLabel(sources.tasks)}")
+        HintText("\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A: ${sourceLabel(sources.tasks)}")
     }
 }
 
